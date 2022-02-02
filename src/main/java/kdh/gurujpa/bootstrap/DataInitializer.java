@@ -20,8 +20,8 @@ public class DataInitializer implements CommandLineRunner {
     public void run(String... args) throws Exception {
         bookRepository.deleteAll();
 
-        Book book1 = new Book("book1", "1234", "book1 pub");
-        Book book2 = new Book("book2", "2345", "book2 pub");
+        Book book1 = new Book("book1", "1234", "book1 pub", null);
+        Book book2 = new Book("book2", "2345", "book2 pub", null);
         Book savedBook1 = bookRepository.save(book1);
         Book savedBook2 = bookRepository.save(book2);
 

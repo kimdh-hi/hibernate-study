@@ -18,7 +18,7 @@ public class BookRepositoryTest {
 
     @Test
     void saveTest() {
-        Book book = new Book("testTitle", "testISBM", "testPub");
+        Book book = new Book("testTitle", "testISBM", "testPub", null);
         bookRepository.save(book);
 
         long count = bookRepository.count();
