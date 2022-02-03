@@ -1,6 +1,8 @@
 package kdh.gurujpa.bootstrap;
 
+import kdh.gurujpa.domain.AuthorUuid;
 import kdh.gurujpa.domain.Book;
+import kdh.gurujpa.repository.AuthorUuidRepository;
 import kdh.gurujpa.repository.BookRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -11,9 +13,11 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final BookRepository bookRepository;
+    private final AuthorUuidRepository authorUuidRepository;
 
-    public DataInitializer(BookRepository bookRepository) {
+    public DataInitializer(BookRepository bookRepository, AuthorUuidRepository authorUuidRepository) {
         this.bookRepository = bookRepository;
+        this.authorUuidRepository = authorUuidRepository;
     }
 
     @Override
@@ -27,6 +31,13 @@ public class DataInitializer implements CommandLineRunner {
 
         bookRepository.findAll().forEach(
                 b -> System.out.println("Book id = " + b.getId())
+        );
+
+        AuthorUuid authorUuid = new AuthorUuid("testName");
+        authorUuidRepository.save(authorUuid);
+
+        authorUuidRepository.findAll().forEach(
+                a -> System.out.println("AuthorUuid id = " + a.getId())
         );
     }
 }
