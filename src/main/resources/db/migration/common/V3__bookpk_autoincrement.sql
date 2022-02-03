@@ -1,1 +1,0 @@
-alter table book change id id bigint auto_increment;
