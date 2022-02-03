@@ -2,6 +2,9 @@ package kdh.gurujpa.integration;
 
 import kdh.gurujpa.domain.AuthorUuid;
 import kdh.gurujpa.domain.BookUuid;
+import kdh.gurujpa.domain.composite.AuthorComposite;
+import kdh.gurujpa.domain.composite.NameId;
+import kdh.gurujpa.repository.AuthorCompositeRepository;
 import kdh.gurujpa.repository.AuthorUuidRepository;
 import kdh.gurujpa.repository.BookRepository;
 import kdh.gurujpa.repository.BookUuidRepository;
@@ -24,16 +27,25 @@ public class MySQLIntegrationTest {
     @Autowired BookRepository bookRepository;
     @Autowired BookUuidRepository bookUuidRepository;
     @Autowired AuthorUuidRepository authorUuidRepository;
+    @Autowired AuthorCompositeRepository authorCompositeRepository;
 
+    @Test
+    void authorCompositeTest() {
+        NameId nameId = new NameId("firstName", "lastName");
+        AuthorComposite save = authorCompositeRepository.save(new AuthorComposite(nameId.getFirstName(), nameId.getLastName(), "country"));
+        AuthorComposite find = authorCompositeRepository.getById(nameId);
+
+        assertThat(find).isNotNull();
+    }
 
     @Test
     void authorUuidRepositoryTest() {
-        AuthorUuid savedAuthorUuid = authorUuidRepository.save(new AuthorUuid("name"));
-        AuthorUuid findAuthorUuid = authorUuidRepository.getById(savedAuthorUuid.getId());
+        AuthorUuid save = authorUuidRepository.save(new AuthorUuid("name"));
+        AuthorUuid find = authorUuidRepository.getById(save.getId());
 
-        assertThat(savedAuthorUuid).isNotNull();
-        assertThat(savedAuthorUuid.getId()).isNotNull();
-        assertThat(findAuthorUuid).isNotNull();
+        assertThat(save).isNotNull();
+        assertThat(save.getId()).isNotNull();
+        assertThat(find).isNotNull();
     }
 
     @Test
