@@ -4,6 +4,7 @@ import com.kdh.jdbcex.domain.Author;
 import org.springframework.stereotype.Component;
 
 import javax.sql.DataSource;
+import javax.xml.transform.Result;
 import java.sql.*;
 import java.util.Objects;
 
@@ -20,10 +21,8 @@ public class AuthorDaoImpl implements AuthorDao {
     @Override
     public Author getById(Long id) {
         Connection connection = null;
-        Statement statement = null;
         PreparedStatement pstm = null;
         ResultSet resultSet = null;
-
 
         try {
             connection = dataSource.getConnection();
@@ -48,86 +47,57 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @Override
     public Author findAuthorByName(String firstName, String lastName) {
-
-        Connection connection = null;
-        PreparedStatement pstm = null;
-        ResultSet resultSet = null;
-
-        try {
-            connection = dataSource.getConnection();
-            pstm = connection.prepareStatement("select * from author where first_name = ? and last_name = ?");
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement pstm = connection.prepareStatement("select * from author where first_name = ? and last_name = ?");
+        ) {
             pstm.setString(1, firstName);
             pstm.setString(2, lastName);
-            resultSet = pstm.executeQuery();
-
-            if (resultSet.next()) {
-                return getAuthorFromResultSet(resultSet);
+            try (ResultSet rs = pstm.executeQuery()) {
+                if (rs.next()) {
+                    return getAuthorFromResultSet(rs);
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                closeAll(resultSet, pstm, connection);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
-
         return null;
     }
 
     @Override
     public Author saveAuthor(Author author) {
-        Connection connection = null;
-        PreparedStatement pstm = null;
-        ResultSet resultSet = null;
 
-        try {
-            connection = dataSource.getConnection();
-            pstm = connection.prepareStatement("insert into author (first_name, last_name) values (?, ?)");
+        try (Connection connection = dataSource.getConnection();
+             Statement stmt = connection.createStatement();
+            PreparedStatement pstm = connection.prepareStatement("insert into author (first_name, last_name) values(?, ?)")
+        ) {
             pstm.setString(1, author.getFirstName());
             pstm.setString(2, author.getLastName());
             pstm.execute();
 
-            Statement statement = connection.createStatement();
-            resultSet = statement.executeQuery("select LAST_INSERT_ID()"); // LAST_INSERT_ID : MySQL함수
-            if (resultSet.next()) {
-                long savedId = resultSet.getLong(1);
-                return getById(savedId);
+            try (ResultSet rs = stmt.executeQuery("select LAST_INSERT_ID()")) {
+                if (rs.next()) {
+                    long savedId = rs.getLong(1);
+                    return getById(savedId);
+                }
             }
-            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                closeAll(resultSet, pstm, connection);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
+
         return null;
     }
 
     @Override
     public Author updateAuthor(Author author) {
-        Connection connection = null;
-        PreparedStatement pstm = null;
-        ResultSet resultSet = null;
-        try {
-            connection = dataSource.getConnection();
-            pstm = connection.prepareStatement("update author set first_name = ?, last_name = ? where id = ?");
+        try (Connection connection = dataSource.getConnection();
+             PreparedStatement pstm = connection.prepareStatement("update author set first_name = ?, last_name = ? where id = ?")
+        ) {
             pstm.setString(1, author.getFirstName());
             pstm.setString(2, author.getLastName());
             pstm.setLong(3, author.getId());
             pstm.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                closeAll(resultSet, pstm, connection);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
 
         return getById(author.getId());
@@ -135,22 +105,13 @@ public class AuthorDaoImpl implements AuthorDao {
 
     @Override
     public void deleteAuthor(Long id) {
-        Connection connection = null;
-        PreparedStatement pstm = null;
-
-        try {
-            connection = dataSource.getConnection();
-            pstm = connection.prepareStatement("delete from author where id = ?");
+        try (Connection connection = dataSource.getConnection();
+            PreparedStatement pstm = connection.prepareStatement("delete from author where id = ?")
+        ) {
             pstm.setLong(1, id);
             pstm.execute();
         } catch (SQLException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                closeAll(null, pstm, connection);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
         }
     }
 
