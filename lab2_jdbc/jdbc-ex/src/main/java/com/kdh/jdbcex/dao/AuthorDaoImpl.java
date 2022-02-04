@@ -27,9 +27,6 @@ public class AuthorDaoImpl implements AuthorDao {
 
         try {
             connection = dataSource.getConnection();
-//            statement = connection.createStatement();
-//            resultSet = statement.executeQuery("select * from author where id = " + id); // SQL injection 취약점
-
             pstm = connection.prepareStatement("select * from author where id = ?");
             pstm.setLong(1, id);
             resultSet = pstm.executeQuery();
@@ -98,6 +95,7 @@ public class AuthorDaoImpl implements AuthorDao {
                 long savedId = resultSet.getLong(1);
                 return getById(savedId);
             }
+            statement.close();
         } catch (SQLException e) {
             e.printStackTrace();
         } finally {
@@ -108,6 +106,52 @@ public class AuthorDaoImpl implements AuthorDao {
             }
         }
         return null;
+    }
+
+    @Override
+    public Author updateAuthor(Author author) {
+        Connection connection = null;
+        PreparedStatement pstm = null;
+        ResultSet resultSet = null;
+        try {
+            connection = dataSource.getConnection();
+            pstm = connection.prepareStatement("update author set first_name = ?, last_name = ? where id = ?");
+            pstm.setString(1, author.getFirstName());
+            pstm.setString(2, author.getLastName());
+            pstm.setLong(3, author.getId());
+            pstm.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                closeAll(resultSet, pstm, connection);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return getById(author.getId());
+    }
+
+    @Override
+    public void deleteAuthor(Long id) {
+        Connection connection = null;
+        PreparedStatement pstm = null;
+
+        try {
+            connection = dataSource.getConnection();
+            pstm = connection.prepareStatement("delete from author where id = ?");
+            pstm.setLong(1, id);
+            pstm.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                closeAll(null, pstm, connection);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 
