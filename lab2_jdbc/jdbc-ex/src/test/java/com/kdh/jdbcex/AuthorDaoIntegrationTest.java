@@ -20,8 +20,26 @@ public class AuthorDaoIntegrationTest {
     @Autowired AuthorDao authorDao;
 
     @Test
+    void saveAuthor() {
+        Author author = new Author();
+        author.setFirstName("dh");
+        author.setLastName("kim");
+        Author save = authorDao.saveAuthor(author);
+
+        assertThat(save).isNotNull();
+        assertThat(save.getId()).isNotNull();
+
+    }
+
+    @Test
+    void findAuthorByName() {
+        Author author = authorDao.findAuthorByName("Craig", "Walls");
+        assertThat(author).isNotNull();
+    }
+
+    @Test
     void getAuthor() {
-        Author author = authorDao.getBuId(1L);
+        Author author = authorDao.getById(1L);
 
         assertThat(author).isNotNull();
     }

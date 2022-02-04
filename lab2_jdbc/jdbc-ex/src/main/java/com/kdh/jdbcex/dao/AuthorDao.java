@@ -4,5 +4,7 @@ import com.kdh.jdbcex.domain.Author;
 
 public interface AuthorDao {
 
-    Author getBuId(Long id);
+    Author getById(Long id);
+    Author findAuthorByName(String firstName, String lastName);
+    Author saveAuthor(Author author);
 }
