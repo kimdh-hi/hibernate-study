@@ -1,4 +1,4 @@
-package com.kdh.jdbctemplate.dao;
+package com.kdh.jdbctemplate.dao.author;
 
 import com.kdh.jdbctemplate.domain.Author;
 import org.springframework.jdbc.core.JdbcTemplate;

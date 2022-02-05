@@ -1,6 +1,6 @@
 package com.kdh.jdbctemplate;
 
-import com.kdh.jdbctemplate.dao.AuthorDao;
+import com.kdh.jdbctemplate.dao.author.AuthorDao;
 import com.kdh.jdbctemplate.domain.Author;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
