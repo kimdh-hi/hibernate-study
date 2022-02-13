@@ -8,6 +8,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.orm.jpa.JpaObjectRetrievalFailureException;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -15,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ActiveProfiles("local")
 @DataJpaTest
-@ComponentScan(basePackages = {"guru.springframework.jdbc.dao"})
+@ComponentScan(basePackages = {"com.kdh.datajpa.dao"})
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 public class AuthorDaoTest {
 
@@ -24,14 +25,14 @@ public class AuthorDaoTest {
     @Test
     void testDeleteAuthor() {
         Author author = new Author();
-        author.setFirstName("john");
-        author.setLastName("t");
+        author.setFirstName("gildong");
+        author.setLastName("hong");
 
         Author saved = authorDao.saveNewAuthor(author);
 
         authorDao.deleteAuthorById(saved.getId());
 
-        assertThrows(EmptyResultDataAccessException.class, () -> {
+        assertThrows(JpaObjectRetrievalFailureException.class, () -> {
             Author deleted = authorDao.getById(saved.getId());
         });
 
@@ -40,22 +41,22 @@ public class AuthorDaoTest {
     @Test
     void testUpdateAuthor() {
         Author author = new Author();
-        author.setFirstName("john");
-        author.setLastName("t");
+        author.setFirstName("gildong");
+        author.setLastName("hong");
 
         Author saved = authorDao.saveNewAuthor(author);
 
-        saved.setLastName("Thompson");
+        saved.setLastName("gildong2");
         Author updated = authorDao.updateAuthor(saved);
 
-        assertThat(updated.getLastName()).isEqualTo("Thompson");
+        assertThat(updated.getLastName()).isEqualTo("gildong2");
     }
 
     @Test
     void testSaveAuthor() {
         Author author = new Author();
-        author.setFirstName("John");
-        author.setLastName("Thompson");
+        author.setFirstName("test");
+        author.setLastName("kim");
         Author saved = authorDao.saveNewAuthor(author);
 
         assertThat(saved).isNotNull();
@@ -63,7 +64,7 @@ public class AuthorDaoTest {
 
     @Test
     void testGetAuthorByName() {
-        Author author = authorDao.findAuthorByName("Craig", "Walls");
+        Author author = authorDao.findAuthorByName("daehyun", "kim");
 
         assertThat(author).isNotNull();
     }
