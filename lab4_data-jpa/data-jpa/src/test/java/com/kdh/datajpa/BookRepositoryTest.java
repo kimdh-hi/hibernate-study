@@ -2,7 +2,6 @@ package com.kdh.datajpa;
 
 import com.kdh.datajpa.domain.Book;
 import com.kdh.datajpa.repository.BookRepository;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Optional;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -57,5 +56,29 @@ public class BookRepositoryTest {
         );
 
         assertThat(count.get()).isEqualTo(5);
+    }
+
+    @DisplayName("@Query 테스트")
+    @Test
+    void findByTitleQueryTest() {
+        Book book = bookRepository.findBookByTitleWithQuery("book3");
+
+        assertThat(book).isNotNull();
+    }
+
+    @DisplayName("@Query NativeQuery 테스트")
+    @Test
+    void findByPublisherNativeQueryTest() {
+        List<Book> books = bookRepository.findBookListByPublisherWithNativeQuery("pub123");
+
+        assertThat(books.size()).isGreaterThan(1);
+    }
+
+    @DisplayName("@Query NativeQuery 테스트2")
+    @Test
+    void findByPublisherNativeQueryTest2() {
+        Book book = bookRepository.findBookByPublisherWithNativeQuery("pub123");
+
+        assertThat(book).isNotNull();
     }
 }
